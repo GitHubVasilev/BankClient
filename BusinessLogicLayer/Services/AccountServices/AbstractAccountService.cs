@@ -33,12 +33,12 @@ namespace BusinessLogicLayer.Services.AccountServices
         public void CloseAccount(T? account)
         {
             if (account == null)
-                { throw new Exception("Счет не найден"); }
+                { throw new ArgumentNullException(nameof(account), "Счет не найден"); }
 
             int indexModel = _listAccount.FindLastIndex(m => m.UID == account.UID);
 
             if (indexModel == -1)
-                { throw new Exception("Счет не найден"); }
+                { throw new ArgumentOutOfRangeException(nameof(account.UID) ,"Счет не найден"); }
 
             _listAccount[indexModel].IsClose = true;
             _repository.Updata(_listAccount[indexModel]);

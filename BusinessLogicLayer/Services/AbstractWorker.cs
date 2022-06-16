@@ -30,7 +30,7 @@ namespace BusinessLogicLayer.Services
         /// </summary>
         public string Name { get; set; }
 #nullable restore
-        protected ValidateModel validate = new ValidateModel();
+        protected ValidateModel validate = new();
 
         public AbstractWorker(IUnitOfWork unitOfWork,
             IAccountHeandler<DepositeAccountDTO> accountServiceDeposite,

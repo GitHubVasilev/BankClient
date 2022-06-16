@@ -20,11 +20,13 @@ namespace BusinessLogicLayer.Services.AccountServices
         /// </summary>
         /// <param name="toAccount">Счет для пополнения</param>
         /// <param name="sum">Сумма пополения</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <returns>Обновленные данные о счете. Если пополение не удалось, вызывается иключение</returns>
         public override DepositeAccountDTO Put(Guid toAccount, decimal sum)
         {
             int indexmModel = _listAccount.FindLastIndex(m => m.UID == toAccount);
-            if (indexmModel == -1) { throw new Exception("Счет не найден"); }
+            if (indexmModel == -1) 
+                { throw new ArgumentOutOfRangeException(toAccount.ToString(),"Счет c ID не найден"); }
             Account model = _listAccount[indexmModel];
             sum *= 1 + (model.Procent / 100);
             model.CountMonetaryUnit += sum;
@@ -37,11 +39,13 @@ namespace BusinessLogicLayer.Services.AccountServices
         /// </summary>
         /// <param name="fromAccount">Счет для снятия</param>
         /// <param name="sum">Сумма снятия</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <returns>Обновленные данные о счете. Если снятие не удалось, то вызыется исключение</returns>
         public override DepositeAccountDTO Withdraw(Guid fromAccount, decimal sum)
         {
             int indexModel = _listAccount.FindLastIndex(m => m.UID == fromAccount);
-            if (indexModel == -1) { throw new Exception("Счет не найден"); }
+            if (indexModel == -1)
+                { throw new ArgumentOutOfRangeException(fromAccount.ToString(), "Счет c ID не найден"); }
             Account model = _listAccount[indexModel];
             if (model.CountMonetaryUnit > 0)
             {
