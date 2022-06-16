@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CA2201: Не порождайте исключения зарезервированных типов
+dotnet_diagnostic.CA2201.severity = suggestion

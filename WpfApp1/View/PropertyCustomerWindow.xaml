@@ -1,0 +1,199 @@
+﻿<Window x:Class="WpfApp1.View.PropertyCustomerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Данные о клиенте"
+        Height="550"
+        Width="400"
+        DataContext="{Binding Source={StaticResource locator}, Path=MainViewModel.SelectedCustomer}">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25*"/>
+            <RowDefinition Height="30*"/>
+            <RowDefinition Height="30*"/>
+            <RowDefinition Height="5*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="7*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Имя: "/>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding FirstName}"/>
+            </Grid>
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="7*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Фамилия: "/>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding LastName}"/>
+            </Grid>
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="7*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Отчество: "/>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding Patronymic}"/>
+            </Grid>
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="7*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Телефон: "/>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding Telephone}"/>
+            </Grid>
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="7*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Паспорт: "/>
+                <TextBlock Grid.Column="1"
+                           Text="{Binding Passport}"/>
+            </Grid>
+        </StackPanel>
+        <GroupBox Header="{Binding DepositeAccount.NameTypeAccount}"
+                  BorderBrush="Black"
+                  BorderThickness="1"
+                  Grid.Row="1">
+            <Grid>
+                <StackPanel DataContext="{Binding DepositeAccount}"
+                            Margin="3">
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="7*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="Название: "/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding Name, ValidatesOnNotifyDataErrors=False}"/>
+                    </Grid>
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="7*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="Дата создания: "/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding DateOpen, StringFormat=D}"/>
+                    </Grid>
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="7*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" 
+                                   Text="Остаток на счете: "/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding CountMonetaryUnit}"/>
+                    </Grid>
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="7*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" 
+                                   Text="Проценты: "/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding Procent}"/>
+                    </Grid>
+                </StackPanel>
+                <DockPanel LastChildFill="False">
+                    <StackPanel Orientation="Horizontal"
+                                DockPanel.Dock="Bottom">
+                        <Button Height="30" 
+                                Width="100"
+                                Margin="5"
+                                Content="Пополнить"
+                                Command="{Binding DepositeAccount.PutMoneyAccountCommand}"/>
+                        <Button Height="30" 
+                                Width="100"
+                                Margin="5"
+                                Content="Создать"
+                                Command="{Binding CreateDepositeAccountCommand}"/>
+                        <Button Height="30" 
+                                Width="100"
+                                Margin="5"
+                                Content="Закрыть"
+                                Command="{Binding CloseDepositeAccountCommand}"/>
+                    </StackPanel>
+                </DockPanel>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="{Binding NoDepositeAccount.NameTypeAccount}"
+                  BorderBrush="Black"
+                  BorderThickness="1" 
+                  Grid.Row="2">
+            <Grid>
+                <StackPanel DataContext="{Binding NoDepositeAccount}"
+                            Margin="3">
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="7*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="Название: "/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding Name, ValidatesOnNotifyDataErrors=False}"/>
+                    </Grid>
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="7*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Дата создания: "/>
+                        <TextBlock Grid.Column="1" Text="{Binding DateOpen, StringFormat=D}"/>
+                    </Grid>
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="7*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Остаток на счете: "/>
+                        <TextBlock Grid.Column="1" Text="{Binding CountMonetaryUnit}"/>
+                    </Grid>
+                </StackPanel>
+                <DockPanel LastChildFill="False">
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
+                        <Button Height="30" 
+                                Width="100"
+                                Margin="5"
+                                Content="Пополнить"
+                                Command="{Binding NoDepositeAccount.PutMoneyAccountCommand}"/>
+                        <Button Height="30" 
+                                Width="100"
+                                Margin="5"
+                                Content="Создать"
+                                Command="{Binding CreateNoDepositeAccountCommand}"/>
+                        <Button Height="30" 
+                                Width="100"
+                                Margin="5"
+                                Content="Закрыть"
+                                Command="{Binding CloseNoDepositeAccountCommand}"/>
+                    </StackPanel>
+                </DockPanel>
+            </Grid>
+        </GroupBox>
+        <Button Grid.Row="3"
+                Content="Перевод"
+                Command="{Binding TransferMoneyCommand}"/>
+    </Grid>
+</Window>

@@ -1,0 +1,108 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        DataContext="{Binding Path=MainViewModel, Source={StaticResource locator}}"
+        Title="MainWindow" Height="450" Width="900">
+    <Grid Margin="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20*"/>
+                <RowDefinition Height="70*"/>
+                <RowDefinition Height="10*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="75*"/>
+                    <ColumnDefinition Width="25*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Left"
+                            Orientation="Horizontal">
+                    <Button Width="120" 
+                            Height="30"
+                            Command="{Binding CreateCustomer}"
+                            Margin="5"
+                            Content="Добавить клиента"/>
+                    <Button Width="120" 
+                            Height="30"
+                            Command="{Binding OpenWindowPropertyCustomer}"
+                            Margin="5"
+                            Content="Свойства"/>
+                </StackPanel>
+                <GroupBox Grid.Column="1"
+                        BorderThickness="2"
+                        BorderBrush="Black"
+                        Margin="0,3"
+                        Padding="10"
+                        Header="Сотрудник"
+                        FontWeight="Bold">
+                    <ComboBox ItemsSource="{Binding Workers}"
+                              SelectedItem="{Binding SelectedWorker}"
+                              HorizontalContentAlignment="Center"
+                              VerticalContentAlignment="Center" 
+                              DisplayMemberPath="Name"
+                              FontSize="15" 
+                              FontWeight="Normal">
+                    </ComboBox>
+                </GroupBox>
+            </Grid>
+            <DataGrid Grid.Row="1"
+                      ItemsSource="{Binding CustomersVM}"
+                      IsSynchronizedWithCurrentItem="True"
+                      AutoGenerateColumns="False"
+                      SelectionMode="Single"
+                      ColumnWidth="*"
+                      CanUserAddRows="False"
+                      SelectedItem="{Binding SelectedCustomer}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Имя"
+                                        Binding="{Binding FirstName}"/>
+                    <DataGridTextColumn Header="Фамилия"
+                                        Binding="{Binding LastName}"/>
+                    <DataGridTextColumn Header="Отчество"
+                                        Binding="{Binding Patronymic}"/>
+                    <DataGridTextColumn Header="Телефон"
+                                        Binding="{Binding Telephone}"/>
+                    <DataGridTextColumn Header="Паспорт"
+                                        Binding="{Binding Passport}"/>
+                    <DataGridTextColumn Header="Дата изменение"
+                                        Binding="{Binding DateChange}"
+                                        IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Измененное поле"
+                                        Binding="{Binding FieldChanged}"
+                                        IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Тип изменения"
+                                        Binding="{Binding TypeChanged}"
+                                        IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Сотрудник"
+                                        Binding="{Binding ChangingWorker}"
+                                        IsReadOnly="True"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Border Grid.Row="2" BorderThickness="1" BorderBrush="Black">
+                <StatusBar>
+                    <StatusBarItem>
+                        <Button Content="События" Command="{Binding OpenWindowLogs}"/>
+                    </StatusBarItem>
+                    <Separator/>
+                    <StatusBarItem>
+                        <TextBlock Text="{Binding LastLog.NameWorker, StringFormat=Менеджер: {0}}"/>
+                    </StatusBarItem>
+                    <Separator/>
+                    <StatusBarItem>
+                        <TextBlock Text="{Binding LastLog.DateOperation, StringFormat=Дата события: {0:dd/MM/yyyy}}"/>
+                    </StatusBarItem>
+                    <Separator/>
+                    <StatusBarItem>
+                        <TextBlock Text="{Binding LastLog.TypeOperation, StringFormat=Описание: {0}}"/>
+                    </StatusBarItem>
+                </StatusBar>
+            </Border>
+        </Grid>
+
+    </Grid>
+</Window>

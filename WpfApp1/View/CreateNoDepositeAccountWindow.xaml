@@ -1,0 +1,55 @@
+﻿<Window x:Class="WpfApp1.View.CreateNoDepositeAccountWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:WpfApp1.ViewModel.Accounts"
+        mc:Ignorable="d"
+        Title="Создание недепазитного счета"
+        Height="200"
+        Width="300">
+    <Window.DataContext>
+        <vm:NoDepositeAccountVM/>
+    </Window.DataContext>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75*"/>
+            <RowDefinition Height="25*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="35*"/>
+                    <ColumnDefinition Width="65*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Название счет: "/>
+                <TextBox Grid.Column="1"
+                         Text="{Binding Name}"/>
+            </Grid>
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="35*"/>
+                    <ColumnDefinition Width="65*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" 
+                           Text="Остаток: "/>
+                <TextBox Grid.Column="1"
+                         Text="{Binding CountMonetaryUnit}"/>
+            </Grid>
+        </StackPanel>
+        <DockPanel LastChildFill="False" Grid.Row="1">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                <Button Content="Добавить"
+                        Margin="5" 
+                        Width="100"
+                        Click="Button_Click"
+                        IsDefault="True"/>
+                <Button Content="Отмена"
+                        Margin="5"
+                        Width="100"
+                        IsCancel="True"/>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</Window>
