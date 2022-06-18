@@ -68,7 +68,7 @@ namespace WpfApp1.ViewModel
                                  catch (Exception e) 
                                  {
                                      Dialogs.DialogError dialogError = new();
-                                     dialogError.ShowDialog(e.Message);
+                                     dialogError.ShowDialog($"Неизвестная ошибка: {e.Message}");
                                  }
                              }, canExecute);
             }

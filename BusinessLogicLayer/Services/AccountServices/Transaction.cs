@@ -29,7 +29,7 @@ namespace BusinessLogicLayer.Services.AccountServices
         /// <param name="toAccount">Счет для перевода</param>
         /// <param name="sum">Сумма перевода</param>
         /// <returns>Результат перевода. В случае неудачи выбрасывает исключение</returns>
-        public ResultTransactionDTO ToTransaction(T fromAccount, K toAccount, decimal sum)
+        public ResultTransactionDTO ToTransaction(T? fromAccount, K? toAccount, decimal sum)
         {
             if (fromAccount != null && toAccount != null)
             {

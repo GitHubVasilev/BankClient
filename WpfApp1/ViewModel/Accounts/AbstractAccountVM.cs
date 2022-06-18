@@ -161,9 +161,13 @@ namespace WpfApp1.ViewModel.Accounts
                         CountMonetaryUnit = PutAndWithdrawService.Put(BaseModel.UID, dialog.CountMoney()).CountMonetaryUnit;
                         _logger.WriteLog(_worker.Name, "Пополнение счета");
                     }
-                    catch (Exception e)
+                    catch (ArgumentOutOfRangeException e)
                     {
                         dialogError.ShowDialog(e.Message);
+                    }
+                    catch (Exception e)
+                    {
+                        dialogError.ShowDialog($"Неизвестная ошибка: {e.Message}");
                     }
                 }
             }, _ => UID != new Guid());

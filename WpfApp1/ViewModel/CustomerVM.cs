@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using WpfApp1.Dialogs;
 using WpfApp1.Infrastructure;
+using WpfApp1.Infrastructure.Exceptions;
 using WpfApp1.Interfaces;
 using WpfApp1.ViewModel.Accounts;
 using WpfApp1.ViewModel.Base;
@@ -114,10 +115,19 @@ namespace WpfApp1.ViewModel
                     _logger.WriteLog(CurrentWorker.Name, $"Обновление имени клиента на: {value}");
                     UpdateModel();
                 }
-                catch (Exception e) 
+                catch (InvalidOperationException e)
+                {
+                    _firstName = oldValue;
+                    dialogError.ShowDialog(e.Message);
+                }
+                catch (InsufficeintPermissionsException e) 
+                {
+                    dialogError.ShowDialog(e.Message);
+                }
+                catch (Exception e)
                 {
                     FirstName = oldValue;
-                    dialogError.ShowDialog(e.Message); 
+                    dialogError.ShowDialog($"Неизвестная ошибка: {e.Message}");
                 }
             }
         }
@@ -143,10 +153,19 @@ namespace WpfApp1.ViewModel
                     _logger.WriteLog(CurrentWorker.Name, $"Обновление фамилии клиента на: {value}");
                     UpdateModel();
                 }
+                catch (InvalidOperationException e)
+                {
+                    _lastName = oldValue;
+                    dialogError.ShowDialog(e.Message);
+                }
+                catch (InsufficeintPermissionsException e)
+                {
+                    dialogError.ShowDialog(e.Message);
+                }
                 catch (Exception e) 
                 {
                     _lastName = oldValue;
-                    dialogError.ShowDialog(e.Message); 
+                    dialogError.ShowDialog($"Неизвестная ошибка: {e.Message}"); 
                 }
             }
         }
@@ -172,11 +191,21 @@ namespace WpfApp1.ViewModel
                     _logger.WriteLog(CurrentWorker.Name, $"Обновление отвества клиента на: {value}");
                     UpdateModel();
                 }
-                catch (Exception e) 
+                catch (InvalidOperationException e)
                 {
                     _patronymic = oldValue;
                     dialogError.ShowDialog(e.Message);
                 }
+                catch (InsufficeintPermissionsException e)
+                {
+                    _patronymic = oldValue;
+                    dialogError.ShowDialog(e.Message);
+                }
+                catch (Exception e) 
+                {
+                    _patronymic = oldValue;
+                    dialogError.ShowDialog($"Неизвестная ошибка: {e.Message}");
+                } 
             }
         }
 
@@ -201,10 +230,20 @@ namespace WpfApp1.ViewModel
                     _logger.WriteLog(CurrentWorker.Name, $"Обновление телефона клиента на: {value}");
                     UpdateModel();
                 }
-                catch (Exception e) 
+                catch (InvalidOperationException e)
                 {
                     _telephone = oldValue;
                     dialogError.ShowDialog(e.Message);
+                }
+                catch (InsufficeintPermissionsException e)
+                {
+                    _telephone = oldValue;
+                    dialogError.ShowDialog(e.Message);
+                }
+                catch (Exception e) 
+                {
+                    _telephone = oldValue;
+                    dialogError.ShowDialog($"Неизвестная ошибка: {e.Message}");
                 }
             }
         }
@@ -229,10 +268,20 @@ namespace WpfApp1.ViewModel
                     _logger.WriteLog(CurrentWorker.Name, $"Обновление паспорта клиента на: {value}");
                     UpdateModel();
                 }
-                catch (Exception e) 
+                catch (InvalidOperationException e) 
                 {
                     _passport = oldValue;
                     dialogError.ShowDialog(e.Message);
+                }
+                catch (InsufficeintPermissionsException e)
+                {
+                    _passport = oldValue;
+                    dialogError.ShowDialog(e.Message);
+                }
+                catch (Exception e)
+                {
+                    _passport = oldValue;
+                    dialogError.ShowDialog($"Неизвестная ошибка: {e.Message}");
                 }
             }
         }
@@ -331,7 +380,7 @@ namespace WpfApp1.ViewModel
                     }
                     catch (Exception e)
                     {
-                        dialogError.ShowDialog(e.Message);
+                        dialogError.ShowDialog($"Неизвестная ошибка: {e.Message}");
                     }
                 }
             }, _ => DepositeAccount.UID == new Guid());
@@ -359,7 +408,7 @@ namespace WpfApp1.ViewModel
                     }
                     catch (Exception e)
                     {
-                        dialogError.ShowDialog(e.Message);
+                        dialogError.ShowDialog($"Неизвестная ошибка: {e.Message}");
                     }
                 }
             }, _ => NoDepositeAccount.UID == new Guid());
@@ -376,11 +425,26 @@ namespace WpfApp1.ViewModel
                   MessageBoxResult resultDialog = MessageBox.Show("Вы действительно ходите закрыть счет", "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Stop);
                   if (resultDialog == MessageBoxResult.Yes) 
                   {
-                      string nameAccount = DepositeAccount.Name;
-                      CurrentWorker.DepositeAccountService.CloseAccount(DepositeAccount.BaseModel);
-                      DepositeAccount = new(CurrentWorker.DepositeAccountService.GetAccountForCustomer(UID), CurrentWorker, _logger);
-                      _logger.WriteLog(CurrentWorker.Name, $"Закрытие депозитного счета: {nameAccount}");
-                      UpdateModel();
+                      try
+                      {
+                          string nameAccount = DepositeAccount.Name;
+                          CurrentWorker.DepositeAccountService.CloseAccount(DepositeAccount.BaseModel);
+                          DepositeAccount = new(CurrentWorker.DepositeAccountService.GetAccountForCustomer(UID), CurrentWorker, _logger);
+                          _logger.WriteLog(CurrentWorker.Name, $"Закрытие депозитного счета: {nameAccount}");
+                          UpdateModel();
+                      }
+                      catch (ArgumentNullException e)
+                      {
+                          dialogError.ShowDialog($"{e.Message}");
+                      }
+                      catch (ArgumentOutOfRangeException e) 
+                      {
+                          dialogError.ShowDialog($"{e.Message}");
+                      }
+                      catch (Exception e)
+                      {
+                          dialogError.ShowDialog($"Неизвестная ошибка: {e.Message}");
+                      }
                   }
               }, _ => DepositeAccount.UID != new Guid());
         }
@@ -396,11 +460,27 @@ namespace WpfApp1.ViewModel
                 MessageBoxResult resultDialog = MessageBox.Show("Вы действительно ходите закрыть счет", "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Stop);
                 if (resultDialog == MessageBoxResult.Yes)
                 {
-                    string nameAccount = NoDepositeAccount.Name;
-                    CurrentWorker.NoDepositeAccountService.CloseAccount(NoDepositeAccount.BaseModel);
-                    NoDepositeAccount = new(CurrentWorker.NoDepositeAccountService.GetAccountForCustomer(UID), CurrentWorker, _logger);
-                    _logger.WriteLog(CurrentWorker.Name, $"Закрытие недепозитного счета: {nameAccount}");
-                    UpdateModel();
+                    try 
+                    {
+                        string nameAccount = NoDepositeAccount.Name;
+                        CurrentWorker.NoDepositeAccountService.CloseAccount(NoDepositeAccount.BaseModel);
+                        NoDepositeAccount = new(CurrentWorker.NoDepositeAccountService.GetAccountForCustomer(UID), CurrentWorker, _logger);
+                        _logger.WriteLog(CurrentWorker.Name, $"Закрытие недепозитного счета: {nameAccount}");
+                        UpdateModel();
+                    }
+                    catch (ArgumentNullException e)
+                    {
+                        dialogError.ShowDialog($"{e.Message}");
+                    }
+                    catch (ArgumentOutOfRangeException e)
+                    {
+                        dialogError.ShowDialog($"{e.Message}");
+                    }
+                    catch (Exception e)
+                    {
+                        dialogError.ShowDialog($"Неизвестная ошибка: {e.Message}");
+                    }
+
                 }
                 
             }, _ => NoDepositeAccount.UID != new Guid());

@@ -19,6 +19,6 @@ namespace BusinessLogicLayer.Interfaces.Accounts
         /// <param name="toAccount">Счет получателя</param>
         /// <param name="sum">Сумма для перевода</param>
         /// <returns>Результат выполнения перевода</returns>
-        ResultTransactionDTO ToTransaction(T fromAccount, K toAccount, decimal sum);
+        ResultTransactionDTO ToTransaction(T? fromAccount, K? toAccount, decimal sum);
     }
 }

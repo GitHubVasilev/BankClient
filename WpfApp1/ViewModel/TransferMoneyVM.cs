@@ -2,7 +2,6 @@
 using BusinessLogicLayer.DTO.Accounts;
 using BusinessLogicLayer.Interfaces.Accounts;
 using BusinessLogicLayer.Services.AccountServices;
-using LoggerLayer.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +9,6 @@ using System.Linq;
 using WpfApp1.Dialogs;
 using WpfApp1.Infrastructure;
 using WpfApp1.Interfaces;
-using WpfApp1.ViewModel.Accounts;
 using WpfApp1.ViewModel.Base;
 
 namespace WpfApp1.ViewModel
@@ -91,7 +89,7 @@ namespace WpfApp1.ViewModel
                     catch (Exception e) 
                     {
                         IDialogError dialog = new DialogError();
-                        dialog.ShowDialog(e.Message);
+                        dialog.ShowDialog($"Неизвестная ошибка: {e.Message}");
                     }
                 }, _ => FromAccount != null && ToAccount != null);
         }
@@ -100,20 +98,24 @@ namespace WpfApp1.ViewModel
             where T : BaseAccountDTO
             where K : BaseAccountDTO
         {
+            IDialogError dialog = new DialogError();
             ITransaction<T, K> _transaction = new Transaction<T, K>(serviceT, serviceK);
             try
             {
-                T fromAccount = FromAccount.BaseModel as T ?? throw new Exception("Счет отправителя не найдет");
-                K toAccount = ToAccount.BaseModel as K ?? throw new Exception("Счет получателя не найдет");
+                T? fromAccount = FromAccount.BaseModel as T;
+                K? toAccount = ToAccount.BaseModel as K;
                 ResultTransactionDTO result = _transaction.ToTransaction(fromAccount, toAccount, SumTransfer);
                 FromAccount.CountMonetaryUnit = result.FromAccount.CountMonetaryUnit;
                 ToAccount.CountMonetaryUnit = result.ToAccount.CountMonetaryUnit;
                 _customer.CurrentWorker.Logger.WriteLog(_customer.CurrentWorker.Name, "Перевод денежных средств");
             }
+            catch (ArgumentNullException e) 
+            { 
+                dialog.ShowDialog(e.Message);
+            }
             catch (Exception e)
             {
-                IDialogError dialog = new DialogError();
-                dialog.ShowDialog(e.Message);
+                dialog.ShowDialog($"Неизвестная ошибка: {e.Message}");
             }
         }
 #nullable restore

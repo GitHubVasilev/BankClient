@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using WpfApp1.Dialogs;
 using WpfApp1.Infrastructure;
+using WpfApp1.Infrastructure.Exceptions;
 using WpfApp1.Interfaces;
 using WpfApp1.ViewModel.Base;
 
@@ -53,18 +54,18 @@ namespace WpfApp1.ViewModel
         }
 
         /// <summary>
-        /// Взывает <see cref="Exception"/> c сообщением "Недостаточно прав"
+        /// Взывает <see cref="InsufficeintPermissionsException"/> c сообщением "Недостаточно прав"
         /// </summary>
         /// <param name="customer"></param>
         public virtual void FirstNameUpdate(CustomerDTO customer)
         {
-            throw new Exception("Недостаточно прав!");
+            throw new InsufficeintPermissionsException("Недостаточно прав для изменения имени клиента!");
         }
 
         /// <summary>
-        /// Взывает <see cref="Exception"/> c сообщением "Недостаточно прав"
+        /// Запрашивает список клиентов у сервиса
         /// </summary>
-        /// <param name="customer"></param>
+        /// <returns>Список пользователей</returns>
         public virtual IEnumerable<CustomerVM> GetCustomers()
         {
             List<CustomerVM> result = new();
@@ -75,7 +76,11 @@ namespace WpfApp1.ViewModel
                     result.Add(new CustomerVM(this, customer));
                 }
             }
-            catch { }
+            catch(Exception e)
+            {
+                DialogError dialogError = new();
+                dialogError.ShowDialog($"Неизвестная ошибка: {e.Message}");
+            }
             return result;
         }
 
@@ -98,39 +103,43 @@ namespace WpfApp1.ViewModel
         }
 
         /// <summary>
-        /// Взывает <see cref="Exception"/> c сообщением "Недостаточно прав"
+        /// Взывает <see cref="InsufficeintPermissionsException"/> c сообщением "Недостаточно прав"
         /// </summary>
+        /// <exception cref="InsufficeintPermissionsException"></exception>
         /// <param name="customer"></param>
         public virtual void LastNameUpdate(CustomerDTO customer)
         {
-            throw new Exception("Недостаточно прав!");
+            throw new InsufficeintPermissionsException("Недостаточно прав для изменения фамилии клиента!");
         }
 
         /// <summary>
-        /// Взывает <see cref="Exception"/> c сообщением "Недостаточно прав"
+        /// Взывает <see cref="InsufficeintPermissionsException"/> c сообщением "Недостаточно прав"
         /// </summary>
+        /// <exception cref="InsufficeintPermissionsException"></exception>
         /// <param name="customer"></param>
         public virtual void PassportUpdate(CustomerDTO customer)
         {
-            throw new Exception("Недостаточно прав!");
+            throw new InsufficeintPermissionsException("Недостаточно прав для изменения пасспорта клиента!");
         }
 
         /// <summary>
-        /// Взывает <see cref="Exception"/> c сообщением "Недостаточно прав"
+        /// Взывает <see cref="InsufficeintPermissionsException"/> c сообщением "Недостаточно прав"
         /// </summary>
+        /// <exception cref="InsufficeintPermissionsException"></exception>
         /// <param name="customer"></param>
         public virtual void PatronymicUpdate(CustomerDTO customer)
         {
-            throw new Exception("Недостаточно прав!");
+            throw new InsufficeintPermissionsException("Недостаточно прав для изменения отчества клиента!");
         }
 
         /// <summary>
-        /// Взывает <see cref="Exception"/> c сообщением "Недостаточно прав"
+        /// Взывает <see cref="InsufficeintPermissionsException"/> c сообщением "Недостаточно прав"
         /// </summary>
+        /// <exception cref="InsufficeintPermissionsException"></exception>
         /// <param name="customer"></param>
         public virtual void TelephoneUpdate(CustomerDTO customer)
         {
-            throw new Exception("Недостаточно прав!");
+            throw new InsufficeintPermissionsException("Недостаточно прав для изменения телефона клиента!");
         }
     }
 }
