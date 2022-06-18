@@ -2,12 +2,12 @@
 using BusinessLogicLayer.DTO.Accounts;
 using BusinessLogicLayer.Interfaces;
 using BusinessLogicLayer.Interfaces.Accounts;
+using Exceptions;
 using LoggerLayer.Interfaces;
 using System;
 using System.Collections.Generic;
 using WpfApp1.Dialogs;
 using WpfApp1.Infrastructure;
-using WpfApp1.Infrastructure.Exceptions;
 using WpfApp1.Interfaces;
 using WpfApp1.ViewModel.Base;
 

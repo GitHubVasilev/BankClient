@@ -1,11 +1,11 @@
 ﻿using BusinessLogicLayer.DTO;
+using Exceptions;
 using LoggerLayer.Interfaces;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using WpfApp1.Dialogs;
 using WpfApp1.Infrastructure;
-using WpfApp1.Infrastructure.Exceptions;
 using WpfApp1.Interfaces;
 using WpfApp1.ViewModel.Accounts;
 using WpfApp1.ViewModel.Base;
@@ -378,6 +378,10 @@ namespace WpfApp1.ViewModel
                         _logger.WriteLog(CurrentWorker.Name, $"Открытие нового депозитного счета: {DepositeAccount.Name}");
                         UpdateModel();
                     }
+                    catch (MinLenghtNameAccountException e) 
+                    {
+                        dialogError.ShowDialog(e.Message);
+                    }
                     catch (Exception e)
                     {
                         dialogError.ShowDialog($"Неизвестная ошибка: {e.Message}");
@@ -405,6 +409,10 @@ namespace WpfApp1.ViewModel
                         NoDepositeAccount = new(CurrentWorker.NoDepositeAccountService.GetAccountForCustomer(UID), CurrentWorker, _logger);
                         _logger.WriteLog(CurrentWorker.Name, $"Открытие нового недепозитного счета: {NoDepositeAccount.Name}");
                         UpdateModel();
+                    }
+                    catch (MinLenghtNameAccountException e)
+                    {
+                        dialogError.ShowDialog(e.Message);
                     }
                     catch (Exception e)
                     {

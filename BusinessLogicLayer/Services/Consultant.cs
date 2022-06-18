@@ -8,7 +8,7 @@ using System.Linq;
 using BusinessLogicLayer.Infrastructure;
 using BusinessLogicLayer.DTO.Accounts;
 using BusinessLogicLayer.Interfaces.Accounts;
-using BusinessLogicLayer.Infrastructure.Exceptions;
+using Exceptions;
 
 namespace BusinessLogicLayer.Services
 {

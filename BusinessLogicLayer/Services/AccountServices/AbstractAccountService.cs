@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLogicLayer.DTO.Accounts;
+using BusinessLogicLayer.Infrastructure;
 using BusinessLogicLayer.Interfaces.Accounts;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
@@ -83,14 +84,20 @@ namespace BusinessLogicLayer.Services.AccountServices
         /// Открывает счет
         /// </summary>
         /// <param name="account">Данные для открытия счета</param>
-        public virtual void OpenAccount(T account) 
+        public virtual void OpenAccount(T? account) 
         {
+            if (account is null)
+            {
+                new ArgumentNullException(nameof(account),$"В поле {account} передано пустое значение");
+            }
+            ValidateModelAccount validator = new();
+            validator.ValidateName(account!.Name);
             MapperConfiguration config = new(cfg => cfg.CreateMap<T, Account>()
                                             .ForMember("DateOpen", opt => opt.MapFrom(m => DateTime.Now.Ticks))
                                             .ForMember("TypeAccount", opt => opt.MapFrom(m => (int)_typeAccounts))
                                             .ForMember("IsClose", opt => opt.MapFrom(m => false)));
             Mapper mapper = new(config);
-            Account model = mapper.Map<T, Account>(account);
+            Account model = mapper.Map<T, Account>(account!);
             _repository.Create(model);
             _listAccount.Add(model);
         }

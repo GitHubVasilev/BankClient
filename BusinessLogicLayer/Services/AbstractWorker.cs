@@ -1,14 +1,13 @@
 ﻿using BusinessLogicLayer.DTO;
 using BusinessLogicLayer.DTO.Accounts;
 using BusinessLogicLayer.Infrastructure;
-using BusinessLogicLayer.Infrastructure.Exceptions;
 using BusinessLogicLayer.Interfaces.Accounts;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
+using Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 
 namespace BusinessLogicLayer.Services
 {

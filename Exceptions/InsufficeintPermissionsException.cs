@@ -1,8 +1,8 @@
-﻿using System;
-
-namespace WpfApp1.Infrastructure.Exceptions
+﻿namespace Exceptions
 {
-
+    /// <summary>
+    /// Исключение. Ошибка доступа
+    /// </summary>
     [Serializable]
     public class InsufficeintPermissionsException : Exception
     {
