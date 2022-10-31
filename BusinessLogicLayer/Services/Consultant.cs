@@ -13,7 +13,7 @@ using Exceptions;
 namespace BusinessLogicLayer.Services
 {
     /// <summary>
-    /// Описывает методы которые может использовать консультант
+    /// Класс описывает методы которые может использовать консультант
     /// </summary>
     public class Consultant : AbstractWorker, IConsultant
     {
@@ -79,8 +79,8 @@ namespace BusinessLogicLayer.Services
         /// <summary>
         /// Выдает исключение <see cref="InsufficeintPermissionsException"/>
         /// </summary>
-        /// <param name="customer"></param>
-        /// <param name="firstname"></param>
+        /// <param name="customer">Клиент</param>
+        /// <param name="firstname">Имя клиента</param>
         /// <exception cref="InsufficeintPermissionsException"/>
         protected override void FirstNameUpdata(ref Customer customer, string? firstname)
         {
