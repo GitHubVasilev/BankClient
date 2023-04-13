@@ -35,7 +35,7 @@ namespace BusinessLogicLayer.Services
         {
             List<CustomerDTO> result = new();
 
-            foreach (Customer customer in _uow.Customers.GetAll()) 
+            foreach (Customer customer in _repository.GetAll()) 
             {
                 string hiddenPassport = string.IsNullOrWhiteSpace(customer.Passport) ? " ": "******************";
                 DepositeAccountDTO depositeAccountDTO = _accountServiceDeposite.GetAccountForCustomer(customer.UID)!;
@@ -68,7 +68,7 @@ namespace BusinessLogicLayer.Services
         /// <exception cref="InvalidOperationException"></exception>
         public override CustomerDTO GetCustomer(Guid customerUID)
         {
-            Customer model = _uow.Customers.Find(m => m.UID == customerUID).First();
+            Customer model = _repository.Find(m => m.UID == customerUID).First();
             model.Passport = string.IsNullOrWhiteSpace(model.Passport) ? " " : "******************";
             DepositeAccountDTO depositeAccountDTO = _accountServiceDeposite.GetAccountForCustomer(customerUID)!;
             NoDepositeAccountDTO noDepositeAccountDTO = _accountServiceNoDeposite.GetAccountForCustomer(customerUID)!;

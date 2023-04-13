@@ -1,8 +1,7 @@
 ﻿using BusinessLogicLayer.DTO.Accounts;
-using BusinessLogicLayer.Infrastructure;
 using BusinessLogicLayer.Interfaces.Accounts;
-using Ninject;
-using Ninject.Modules;
+using DataAccessLayer.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using WpfApp1.Interfaces;
 using WpfApp1.ViewModel;
@@ -14,15 +13,18 @@ namespace WpfApp1.Infrastructure
     /// </summary>
     public class ViewModelLocator
     {
-        private readonly StandardKernel _kernal;
+        private readonly ServiceProvider _kernal;
 
         public ViewModelLocator()
         {
-            NinjectModule registrations = new IocConfiguration();
-            NinjectModule serviceModule = new ServiceModule();
-            _kernal = new StandardKernel(registrations, serviceModule);
-            MainViewModel = _kernal.Get<MainViewModel>();
-            LogsVM = _kernal.Get<LogsVM>();
+            IocConfiguration registrations = new IocConfiguration();
+            _kernal = registrations.Load();
+            using (var scope = _kernal.CreateScope()) 
+            {
+                DataInitializer.InitializerAsync(scope.ServiceProvider).GetAwaiter().GetResult();
+            }
+            MainViewModel = _kernal.GetService<MainViewModel>();
+            LogsVM = _kernal.GetService<LogsVM>();
         }
 
         public LogsVM LogsVM { get; }

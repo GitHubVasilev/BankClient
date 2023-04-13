@@ -45,8 +45,7 @@
                               HorizontalContentAlignment="Center"
                               VerticalContentAlignment="Center" 
                               DisplayMemberPath="Name"
-                              FontSize="15" 
-                              FontWeight="Normal">
+                              FontSize="15">
                     </ComboBox>
                 </GroupBox>
             </Grid>

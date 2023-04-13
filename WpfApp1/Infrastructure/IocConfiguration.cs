@@ -2,23 +2,33 @@
 using BusinessLogicLayer.Services;
 using LoggerLayer.Services;
 using LoggerLayer.Interfaces;
-using Ninject.Modules;
+using Microsoft.Extensions.DependencyInjection;
+using DataAccessLayer.Infrastructure;
+using BusinessLogicLayer.Infrastructure;
+using WpfApp1.ViewModel;
 
 namespace WpfApp1.Infrastructure
 {
     /// <summary>
     /// Добавление внедрение зависимости
     /// </summary>
-    internal class IocConfiguration : NinjectModule
+    internal class IocConfiguration 
     {
         /// <summary>
         /// Сопоставляет интерфейс с конкретной реализацией
         /// </summary>
-        public override void Load()
+        public ServiceProvider Load()
         {
-            Bind<IConsultant>().To<Consultant>();
-            Bind<IManager>().To<Manager>();
-            Bind<ILoggerService>().To<LoggerService>().InSingletonScope();
+            IServiceCollection services = new ServiceCollection();
+            services.AddUnitOfWork();
+            services.AddServices();
+            services.AddScoped<IConsultant, Consultant>();
+            services.AddScoped<IManager, Manager>();
+            services.AddScoped<ILoggerService, LoggerService>();
+
+            services.AddScoped<MainViewModel>();
+            
+            return services.BuildServiceProvider();
         }
     }
 }

@@ -2,6 +2,7 @@
 using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
 using System;
+using System.Linq;
 
 namespace BusinessLogicLayer.Services.AccountServices
 {
@@ -24,14 +25,13 @@ namespace BusinessLogicLayer.Services.AccountServices
         /// <returns>Обновленные данные о счете. Если пополение не удалось, вызывается иключение</returns>
         public override DepositeAccountDTO Put(Guid toAccount, decimal sum)
         {
-            int indexmModel = _listAccount.FindLastIndex(m => m.UID == toAccount);
-            if (indexmModel == -1) 
+            Account? model = _repository.Find(m => m.UID == toAccount).OrderBy(m=>m).LastOrDefault();
+            if (model is null) 
                 { throw new ArgumentOutOfRangeException(toAccount.ToString(),"Счет c ID не найден"); }
-            Account model = _listAccount[indexmModel];
             sum *= 1 + (model.Procent / 100);
             model.CountMonetaryUnit += sum;
             _repository.Updata(model);
-            return GetAccountForCustomer(model.UIDClient)!;
+            return GetAccountForCustomer(model.Customer.UID)!;
         }
 
         /// <summary>
@@ -43,10 +43,10 @@ namespace BusinessLogicLayer.Services.AccountServices
         /// <returns>Обновленные данные о счете. Если снятие не удалось, то вызыется исключение</returns>
         public override DepositeAccountDTO Withdraw(Guid fromAccount, decimal sum)
         {
-            int indexModel = _listAccount.FindLastIndex(m => m.UID == fromAccount);
-            if (indexModel == -1)
+            Account? model = _repository.Find(m => m.UID == fromAccount).OrderBy(m => m).LastOrDefault();
+            if (model is null)
                 { throw new ArgumentOutOfRangeException(fromAccount.ToString(), "Счет c ID не найден"); }
-            Account model = _listAccount[indexModel];
+
             if (model.CountMonetaryUnit > 0)
             {
                 sum *= 1 + (model.Procent / 100);
@@ -54,7 +54,7 @@ namespace BusinessLogicLayer.Services.AccountServices
 
             model.CountMonetaryUnit -= sum;
             _repository.Updata(model);
-            return GetAccountForCustomer(model.UIDClient)!;
+            return GetAccountForCustomer(model.Customer.UID)!;
         }
     }
 }
