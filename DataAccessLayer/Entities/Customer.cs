@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DataAccessLayer.Entities
 {
@@ -27,6 +28,10 @@ namespace DataAccessLayer.Entities
         /// Данные паспорта
         /// </summary>
         public string Passport { get; set; }
+        /// <summary>
+        /// Список счетов клиента
+        /// </summary>
+        public List<Account> Accounts { get; set; } = new();
         /// <summary>
         /// Дата последнего изменения
         /// </summary>

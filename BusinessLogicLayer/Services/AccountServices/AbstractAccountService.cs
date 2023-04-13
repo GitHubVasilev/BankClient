@@ -17,14 +17,12 @@ namespace BusinessLogicLayer.Services.AccountServices
     public abstract class AbstractAccountService<T> : IAccountHeandler<T>
         where T : BaseAccountDTO
     {
-        protected List<Account> _listAccount;
         protected readonly IRepository<Account> _repository;
         protected TypeAccounts _typeAccounts;
 
         public AbstractAccountService(IUnitOfWork uow)
         {
-            _repository = uow.Accounts;
-            _listAccount = uow.Accounts.GetAll().ToList();
+            _repository = uow.GetRepository<Account>();
         }
 
         /// <summary>
@@ -36,13 +34,12 @@ namespace BusinessLogicLayer.Services.AccountServices
             if (account == null)
                 { throw new ArgumentNullException(nameof(account), "Счет не найден"); }
 
-            int indexModel = _listAccount.FindLastIndex(m => m.UID == account.UID);
+            Account? model = _repository.Find(m => m.UID == account.UID).OrderBy(m => m).LastOrDefault();
 
-            if (indexModel == -1)
+            if (model is null)
                 { throw new ArgumentOutOfRangeException(nameof(account.UID) ,"Счет не найден"); }
 
-            _listAccount[indexModel].IsClose = true;
-            _repository.Updata(_listAccount[indexModel]);
+            _repository.Remove(model);
         }
 
         /// <summary>
@@ -52,9 +49,11 @@ namespace BusinessLogicLayer.Services.AccountServices
         /// <returns>Счет клиента</returns>
         public virtual T? GetAccountForCustomer(Guid UIDCustomer) 
         {
-            Account? findAccount = _listAccount.LastOrDefault(m => m.UIDClient == UIDCustomer
+            Account? findAccount = _repository.Find(m => m.Customer.UID == UIDCustomer
                                                      && m.TypeAccount == (int)_typeAccounts
-                                                     && m.IsClose == false);
+                                                     && m.IsClose == false)
+                                                .OrderBy(m => m)
+                                                .LastOrDefault();
             if (findAccount == null) { return null; }
             MapperConfiguration config = new(cfg => cfg.CreateMap<Account, T>());
             Mapper mapper = new(config);
@@ -70,7 +69,7 @@ namespace BusinessLogicLayer.Services.AccountServices
             List<T> result = new();
             MapperConfiguration config = new(cfg => cfg.CreateMap<Account, T>());
             Mapper mapper = new(config);
-            foreach (Account account in _listAccount)
+            foreach (Account account in _repository.GetAll())
             {
                 if ((TypeAccounts)account.TypeAccount == _typeAccounts && account.IsClose == false)
                 {
@@ -95,11 +94,18 @@ namespace BusinessLogicLayer.Services.AccountServices
             MapperConfiguration config = new(cfg => cfg.CreateMap<T, Account>()
                                             .ForMember("DateOpen", opt => opt.MapFrom(m => DateTime.Now.Ticks))
                                             .ForMember("TypeAccount", opt => opt.MapFrom(m => (int)_typeAccounts))
-                                            .ForMember("IsClose", opt => opt.MapFrom(m => false)));
+                                            .ForMember("IsClose", opt => opt.MapFrom(m => false))
+                                            .ForMember("ClientId", opt => opt.MapFrom(m => m.UIDClient)));
             Mapper mapper = new(config);
-            Account model = mapper.Map<T, Account>(account!);
-            _repository.Create(model);
-            _listAccount.Add(model);
+            try 
+            {
+                Account model = mapper.Map<T, Account>(account!);
+                _repository.Create(model);
+            }
+            catch (Exception ex) 
+            {
+                
+            }
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer.Entities;
 using System;
+using System.Threading.Tasks;
 
 namespace DataAccessLayer.Interfaces
 {
@@ -11,8 +12,15 @@ namespace DataAccessLayer.Interfaces
         /// <summary>
         /// Интерфес взаимодействия с данными из источника данных
         /// </summary>
-        IRepository<Customer> Customers { get; }
-        IRepository<Account> Accounts { get; }
-        void Save();
+        IRepository<T> GetRepository<T>() where T : class;
+
+        /// <summary>
+        /// Добавляет все изменения в источник данных
+        /// </summary>
+        void SaveChange();
+        /// <summary>
+        /// Добавляет все изменения в источник данных асинхронно
+        /// </summary>
+        Task SaveChangeAsync();
     }
 }

@@ -2,6 +2,7 @@
 using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
 using System;
+using System.Linq;
 
 namespace BusinessLogicLayer.Services.AccountServices
 {
@@ -25,13 +26,13 @@ namespace BusinessLogicLayer.Services.AccountServices
         public override NoDepositeAccountDTO Put(Guid toAccount, decimal sum)
         {
 #nullable disable
-            int indexModel = _listAccount.FindLastIndex(m => m.UID == toAccount);
-            if (indexModel == -1)
-                { throw new ArgumentOutOfRangeException(toAccount.ToString(), "Счет c ID не найден"); }
-            Account model = _listAccount[indexModel];
+            Account model = _repository.Find(m => m.UID == toAccount).OrderBy(m => m).LastOrDefault();
+            if (model is null)
+            { throw new ArgumentOutOfRangeException(toAccount.ToString(), "Счет c ID не найден"); }
+
             model.CountMonetaryUnit += sum;
             _repository.Updata(model);
-            return GetAccountForCustomer(model.UIDClient);
+            return GetAccountForCustomer(model.Customer.UID);
 #nullable restore
         }
 
@@ -45,13 +46,13 @@ namespace BusinessLogicLayer.Services.AccountServices
         public override NoDepositeAccountDTO Withdraw(Guid fromAccount, decimal sum)
         {
 #nullable disable
-            int modelIndex = _listAccount.FindLastIndex(m => m.UID == fromAccount);
-            if (modelIndex == -1)
+            Account model = _repository.Find(m => m.UID == fromAccount).OrderBy(m => m).LastOrDefault();
+            if (model is null)
                 { throw new ArgumentOutOfRangeException(fromAccount.ToString(), "Счет c ID не найден"); }
-            Account model = _listAccount[modelIndex];
+
             model.CountMonetaryUnit -= sum;
             _repository.Updata(model);
-            return GetAccountForCustomer(model.UIDClient);
+            return GetAccountForCustomer(model.Customer.UID);
 #nullable restore
         }
     }

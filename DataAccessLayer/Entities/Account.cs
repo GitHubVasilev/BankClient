@@ -8,10 +8,6 @@ namespace DataAccessLayer.Entities
     public class Account : Entity<Guid>
     {
         /// <summary>
-        /// Идентификатор клиента которому принадлежит счет
-        /// </summary>
-        public Guid UIDClient { get; set; }
-        /// <summary>
         /// Название счета
         /// </summary>
         public string Name { get; set; }
@@ -39,5 +35,13 @@ namespace DataAccessLayer.Entities
         /// Определяет закрыт ли счет. True - закрыт
         /// </summary>
         public bool IsClose { get; set; }
+        /// <summary>
+        /// Идентификатор клиента которому принадлежит счет
+        /// </summary>
+        public Customer Customer { get; set; }
+        /// <summary>
+        /// Идентификатор клиента
+        /// </summary>
+        public Guid? ClientId { get; set; }
     }
 }

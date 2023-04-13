@@ -42,7 +42,7 @@ namespace BusinessLogicLayer.Services
             model.TypeChanged = (int)TypeChanged.Create;
             model.FieldChanged = (int)FieldChanged.None;
 
-            _uow.Customers.Create(model);
+            _repository.Create(model);
         }
     }
 }

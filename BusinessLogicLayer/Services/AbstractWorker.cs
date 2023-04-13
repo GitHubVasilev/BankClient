@@ -17,7 +17,7 @@ namespace BusinessLogicLayer.Services
     /// </summary>
     public abstract class AbstractWorker
     {
-        protected readonly IUnitOfWork _uow;
+        protected readonly IRepository<Customer> _repository;
         protected readonly IAccountHeandler<DepositeAccountDTO> _accountServiceDeposite;
         protected readonly IAccountHeandler<NoDepositeAccountDTO> _accountServiceNoDeposite;
         protected IPutAndWithdrawMoney<DepositeAccountDTO> _putAndWhitdrawDepositeService;
@@ -37,7 +37,7 @@ namespace BusinessLogicLayer.Services
             IPutAndWithdrawMoney<DepositeAccountDTO> putAndWhitdrawDepositeService,
             IPutAndWithdrawMoney<NoDepositeAccountDTO> putAndWhitdrawNoDepositeService)
         {
-            _uow = unitOfWork;
+            _repository = unitOfWork.GetRepository<Customer>();
             _accountServiceDeposite = accountServiceDeposite;
             _accountServiceNoDeposite = accountServiceNoDeposite;
             _putAndWhitdrawDepositeService = putAndWhitdrawDepositeService;
@@ -53,7 +53,7 @@ namespace BusinessLogicLayer.Services
         /// <exception cref="Exception"/>
         public void UpdataCustomer(CustomerDTO customer, FieldChanged type)
         {
-            Customer model = _uow.Customers.Find(m => customer.UID == m.UID).First();
+            Customer model = _repository.Find(m => customer.UID == m.UID).First();
             model.DateChange = DateTime.Now.Ticks;
             model.ChangingWorker = Name;
             model.FieldChanged = (int)type;
@@ -79,7 +79,7 @@ namespace BusinessLogicLayer.Services
                 default:
                     throw new InvalidOperationException("Неизветный тип поля");
             }
-            _uow.Customers.Updata(model);
+            _repository.Updata(model);
         }
 
         public IAccountHeandler<DepositeAccountDTO> DepositeAccountService => _accountServiceDeposite;
@@ -98,7 +98,7 @@ namespace BusinessLogicLayer.Services
         {
             DepositeAccountDTO depositeAccountDTO = _accountServiceDeposite.GetAccountForCustomer(customerUID)!;
             NoDepositeAccountDTO noDepositeAccountDTO = _accountServiceNoDeposite.GetAccountForCustomer(customerUID)!;
-            return ConverterCustomer.ToCustomerDTO(_uow.Customers.Find(m => m.UID == customerUID).First(), depositeAccountDTO, noDepositeAccountDTO);
+            return ConverterCustomer.ToCustomerDTO(_repository.Find(m => m.UID == customerUID).First(), depositeAccountDTO, noDepositeAccountDTO);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace BusinessLogicLayer.Services
         {
             List<CustomerDTO> result = new();
 
-            foreach (Customer customer in _uow.Customers.GetAll())
+            foreach (Customer customer in _repository.GetAll())
             {
                 DepositeAccountDTO depositeAccountDTO = _accountServiceDeposite.GetAccountForCustomer(customer.UID)!;
                 NoDepositeAccountDTO noDepositeAccountDTO = _accountServiceNoDeposite.GetAccountForCustomer(customer.UID)!;
