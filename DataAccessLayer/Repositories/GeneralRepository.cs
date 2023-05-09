@@ -35,6 +35,16 @@ namespace DataAccessLayer.Repositories
         }
 
         /// <summary>
+        /// Добавляет запись в список моделей асинхронно
+        /// </summary>
+        /// <param name="item">Новая модель</param>
+        public async Task CreateAsync(T item)
+        {
+            await _dbSet.AddAsync(item).ConfigureAwait(false);
+            await SaveChangeAsync().ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Поиск по параметру (Where запрос)
         /// </summary>
         /// <param name="predicate">Условие выбора модели</param>
@@ -64,6 +74,16 @@ namespace DataAccessLayer.Repositories
         }
 
         /// <summary>
+        /// Удаляет запись из источника данных асинхронно
+        /// </summary>
+        /// <param name="item">Объект для удаления</param>
+        public async Task RemoveAsync(T item)
+        {
+            _dbSet.Remove(item);
+            await _context.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Добавляет все изменения в источник данных
         /// </summary>
         public void SaveChange()
@@ -76,7 +96,7 @@ namespace DataAccessLayer.Repositories
         /// </summary>
         public async Task SaveChangeAsync()
         {
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -87,6 +107,16 @@ namespace DataAccessLayer.Repositories
         {
             _context.Entry(item).State = EntityState.Modified;
             SaveChange();
+        }
+
+        /// <summary>
+        /// Обновляет запись в списке моделей асинхроно
+        /// </summary>
+        /// <param name="item">Обновленная модель</param>
+        public async Task UpdataAsync(T item)
+        {
+            _context.Entry(item).State = EntityState.Modified;
+            await SaveChangeAsync().ConfigureAwait(false);
         }
     }
 }

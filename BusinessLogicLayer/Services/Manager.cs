@@ -6,6 +6,7 @@ using DataAccessLayer.Interfaces;
 using System;
 using BusinessLogicLayer.Interfaces.Accounts;
 using BusinessLogicLayer.DTO.Accounts;
+using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Services
 {
@@ -43,6 +44,28 @@ namespace BusinessLogicLayer.Services
             model.FieldChanged = (int)FieldChanged.None;
 
             _repository.Create(model);
+        }
+
+        /// <summary>
+        /// Добавляет новую запись о клиенте в источник данных. Если модель содержит ошибки вызывает исключение <see cref="Exception"/>
+        /// Асинхронный метод
+        /// </summary>
+        /// <param name="customer">DTO нового клиента</param>
+        /// <exception cref="Exception"></exception>
+        public override async Task CreateCustomerAsync(CustomerDTO customer)
+        {
+            Customer model = ConverterCustomer.ToCustomerModel(customer);
+            FirstNameUpdata(ref model, customer.FirstName);
+            LastNameUpdata(ref model, customer.LastName);
+            PatronymicUpdata(ref model, customer.Patronymic);
+            TelephoneUpdata(ref model, customer.Telephone);
+            PassportUpdata(ref model, customer.Passport);
+            model.ChangingWorker = Name;
+            model.DateChange = DateTime.Now.Ticks;
+            model.TypeChanged = (int)TypeChanged.Create;
+            model.FieldChanged = (int)FieldChanged.None;
+
+            await _repository.CreateAsync(model).ConfigureAwait(false);
         }
     }
 }

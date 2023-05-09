@@ -31,10 +31,28 @@ namespace DataAccessLayer.Interfaces
         void Updata(T item);
 
         /// <summary>
+        /// Обновляет запись в списке моделей асинхроно
+        /// </summary>
+        /// <param name="item">Обновленная модель</param>
+        Task UpdataAsync(T item);
+
+        /// <summary>
         /// Добавляет запись в список моделей
         /// </summary>
         /// <param name="item">Новая модель</param>
         void Create(T item);
+
+        /// <summary>
+        /// Добавляет запись в список моделей асинхроно
+        /// </summary>
+        /// <param name="item">Новая модель</param>
+        Task CreateAsync(T item);
+
+        /// <summary>
+        /// Удаляет запись из источника данных асинхроно
+        /// </summary>
+        /// <param name="item">Объект для удаления</param>
+        Task RemoveAsync(T item);
 
         /// <summary>
         /// Удаляет запись из источника данных
@@ -51,7 +69,5 @@ namespace DataAccessLayer.Interfaces
         /// Добавляет все изменения в источник данных асинхронно
         /// </summary>
         Task SaveChangeAsync();
-
-
     }
 }

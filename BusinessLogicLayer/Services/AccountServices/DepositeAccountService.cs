@@ -3,6 +3,7 @@ using DataAccessLayer.Entities;
 using DataAccessLayer.Interfaces;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Services.AccountServices
 {
@@ -25,13 +26,31 @@ namespace BusinessLogicLayer.Services.AccountServices
         /// <returns>Обновленные данные о счете. Если пополение не удалось, вызывается иключение</returns>
         public override DepositeAccountDTO Put(Guid toAccount, decimal sum)
         {
-            Account? model = _repository.Find(m => m.UID == toAccount).OrderBy(m=>m).LastOrDefault();
+            Account? model = _repository.Find(m => m.UID == toAccount).LastOrDefault();
             if (model is null) 
                 { throw new ArgumentOutOfRangeException(toAccount.ToString(),"Счет c ID не найден"); }
             sum *= 1 + (model.Procent / 100);
             model.CountMonetaryUnit += sum;
             _repository.Updata(model);
             return GetAccountForCustomer(model.Customer.UID)!;
+        }
+
+        /// <summary>
+        /// Пополняет указанный счет
+        /// Асинхронный метод
+        /// </summary>
+        /// <param name="toAccount">Счет для пополнения</param>
+        /// <param name="sum">Сумма пополения</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <returns>Обновленные данные о счете. Если пополение не удалось, вызывается иключение</returns>
+        public override async Task<DepositeAccountDTO> PutAsync(Guid toAccount, decimal sum)
+        {
+            Task<DepositeAccountDTO> task = Task.Run(() =>
+            {
+                return Put(toAccount, sum)!;
+            });
+
+            return await task.ConfigureAwait(false);
         }
 
         /// <summary>
@@ -55,6 +74,23 @@ namespace BusinessLogicLayer.Services.AccountServices
             model.CountMonetaryUnit -= sum;
             _repository.Updata(model);
             return GetAccountForCustomer(model.Customer.UID)!;
+        }
+
+        /// <summary>
+        /// Снимает средства со счета
+        /// Асинхронный метод
+        /// </summary>
+        /// <param name="fromAccount">Счет для снятия</param>
+        /// <param name="sum">Сумма снятия</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <returns>Обновленные данные о счете. Если снятие не удалось, то вызыется исключение</returns>
+        public override async Task<DepositeAccountDTO> WithdrawAsync(Guid fromAccount, decimal sum)
+        {
+            Task<DepositeAccountDTO> task = Task.Run(() =>
+            {
+                return Withdraw(fromAccount, sum);
+            });
+            return await task.ConfigureAwait(false);
         }
     }
 }
