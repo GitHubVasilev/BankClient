@@ -7,7 +7,9 @@ using DataAccessLayer.Interfaces;
 using Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Services
 {
@@ -82,6 +84,23 @@ namespace BusinessLogicLayer.Services
             _repository.Updata(model);
         }
 
+        /// <summary>
+        /// Обнавляет данные о клиенте. Асинхронный метод
+        /// Может изменить все поля.
+        /// </summary>
+        /// <param name="model">Обновленная модель</param>
+        /// <param name="type">Тип изменения
+        /// Если тип не поддерживается будет вызвано исключение <see cref="Exception"/></param>
+        /// <exception cref="Exception"/>
+        public async Task UpdataCustomerAsync(CustomerDTO customer, FieldChanged type)
+        {
+            Task task = Task.Run(() =>
+            {
+                UpdataCustomer(customer, type);
+            });
+            await task.ConfigureAwait(false);
+        }
+
         public IAccountHeandler<DepositeAccountDTO> DepositeAccountService => _accountServiceDeposite;
         public IAccountHeandler<NoDepositeAccountDTO> NoDepositeAccountService => _accountServiceNoDeposite;
 
@@ -102,7 +121,22 @@ namespace BusinessLogicLayer.Services
         }
 
         /// <summary>
-        /// 
+        /// Если клиент не найден, вызывает исключение <see cref="InvalidOperationException"/>
+        /// Асинхронный метод.
+        /// </summary>
+        /// <param name="customerUID">Идентификационный номер клиента</param>
+        /// <returns>Возвращает найденого клиента</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public virtual async Task<CustomerDTO> GetCustomerAsync(Guid customerUID)
+        {
+            Task<CustomerDTO> task = Task.Run(() => { 
+                return GetCustomer(customerUID);
+            });
+            return await task.ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Создает список клиентов
         /// </summary>
         /// <returns>Список клиентов</returns>
         public virtual IEnumerable<CustomerDTO> GetCustomers()
@@ -119,12 +153,37 @@ namespace BusinessLogicLayer.Services
         }
 
         /// <summary>
+        /// Создает список клиентов асинхроно
+        /// </summary>
+        /// <returns>Список клиентов</returns>
+        public virtual async Task<IEnumerable<CustomerDTO>> GetCustomersAsync()
+        {
+            Task<IEnumerable<CustomerDTO>> task = Task.Run(() =>
+            {
+                return GetCustomers();
+            });
+
+            return await task.ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Добавляет нового клиента в источник данных.
         /// По-умолчанию бросает исключение <see cref="Exception"/>
         /// </summary>
         /// <param name="customer">модель для добавления</param>
         /// <exception cref="InsufficeintPermissionsException"/>
         public virtual void CreateCustomer(CustomerDTO customer)
+        {
+            throw new InsufficeintPermissionsException("Недостаточно прав для добавления нового пользователя");
+        }
+
+        /// <summary>
+        /// Добавляет нового клиента в источник данных. Асинхронный метод
+        /// По-умолчанию бросает исключение <see cref="Exception"/>
+        /// </summary>
+        /// <param name="customer">модель для добавления</param>
+        /// <exception cref="InsufficeintPermissionsException"/>
+        public virtual async Task CreateCustomerAsync(CustomerDTO customer)
         {
             throw new InsufficeintPermissionsException("Недостаточно прав для добавления нового пользователя");
         }

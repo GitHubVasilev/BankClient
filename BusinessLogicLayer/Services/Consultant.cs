@@ -9,6 +9,7 @@ using BusinessLogicLayer.Infrastructure;
 using BusinessLogicLayer.DTO.Accounts;
 using BusinessLogicLayer.Interfaces.Accounts;
 using Exceptions;
+using System.Threading.Tasks;
 
 namespace BusinessLogicLayer.Services
 {
@@ -59,6 +60,22 @@ namespace BusinessLogicLayer.Services
             return result;
         }
 
+
+        /// <summary>
+        /// Заменяет значение поля Passport на звездочки(*). Если поле изначально не заполнено, то поле останется пустым
+        /// </summary>
+        /// <returns>Список клиентов</returns>
+        public override async Task<IEnumerable<CustomerDTO>> GetCustomersAsync()
+        {
+            Task<IEnumerable<CustomerDTO>> task = Task.Run(() =>
+            {
+                return GetCustomers();
+            });
+
+            return await task.ConfigureAwait(false);
+        }
+
+
         /// <summary>
         /// Заменяет значение поля Passport на звездочки(*). Если изначально поле не заполнено, поле останется пустым
         /// Если клиент не найден, вызывает исключение <see cref="InvalidOperationException"/>
@@ -74,6 +91,23 @@ namespace BusinessLogicLayer.Services
             NoDepositeAccountDTO noDepositeAccountDTO = _accountServiceNoDeposite.GetAccountForCustomer(customerUID)!;
             CustomerDTO customer = ConverterCustomer.ToCustomerDTO(model, depositeAccountDTO, noDepositeAccountDTO);
             return customer;
+        }
+
+        /// <summary>
+        /// Заменяет значение поля Passport на звездочки(*). Если изначально поле не заполнено, поле останется пустым
+        /// Если клиент не найден, вызывает исключение <see cref="InvalidOperationException"/>
+        /// Асинхронный метод
+        /// </summary>
+        /// <param name="customerUID">Идентификационный номер клиента</param>
+        /// <returns>Найденный клиент</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public override async Task<CustomerDTO> GetCustomerAsync(Guid customerUID)
+        {
+            Task<CustomerDTO> task = Task.Run(() =>
+            {
+                return GetCustomer(customerUID);
+            });
+            return await task.ConfigureAwait(false);
         }
 
         /// <summary>
